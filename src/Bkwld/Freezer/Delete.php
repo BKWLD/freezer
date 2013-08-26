@@ -23,6 +23,9 @@ class Delete {
 	 */
 	public function clear($pattern = null, $lifetime = null) {
 		
+		// Test whether the cache directory has been created
+		if (!is_dir($this->dir)) return 0;
+		
 		// Loop through directory
 		$i = 0;
 		foreach(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($this->dir), RecursiveIteratorIterator::CHILD_FIRST) as $f) {
