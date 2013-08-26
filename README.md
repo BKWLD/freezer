@@ -1,4 +1,2 @@
-laravel-page-cache
-==================
+# Freezer
 
-Creates cached versions of full pages that can be served directly by Apache

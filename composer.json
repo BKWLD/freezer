@@ -1,12 +1,13 @@
 {
     "name": "bkwld/freezer",
-    "description": "",
+    "description": "Using Laravel, creates cached versions of full pages that can be served directly by Apache",
     "authors": [
         {
-            "name": "",
-            "email": ""
+            "name": "Robert Reinhard",
+            "email": "info@bkwld.com"
         }
     ],
+    "license": "MIT",
     "require": {
         "php": ">=5.3.0",
         "illuminate/support": "4.0.x"
