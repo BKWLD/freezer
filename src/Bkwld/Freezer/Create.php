@@ -2,7 +2,6 @@
 
 // Dependencies
 use Log;
-use Str;
 
 class Create {
 	
@@ -22,52 +21,21 @@ class Create {
 	 * Conditionally create a cache file if the request path
 	 * matches the whitelist and not the blacklist
 	 * @param Illuminate\Http\REquest $request
-	 * @param array $whitelist
-	 * @param array $blacklist
+	 * @param Bkwld\Freezer\Lists $lists
 	 */
-	public function conditionallyCache($request, $whitelist, $blacklist) {
+	public function conditionallyCache($request, $lists) {
 		
 		// Only allow GETs
 		if ($request->getMethod() != 'GET') return false;
 		
-		// Check white and blaclists
+		// Check white and blacklists
 		$path = $request->path();
-		$lifetime = $this->check($path, $whitelist);
-		if ($lifetime !== false && $this->check($path, $blacklist) === false) {
+		$lifetime = $lists->checkAndGetLifetime($path);
+		if ($lifetime !== false) {
 			
-			// Create the back
+			// Create the cache
 			$this->cache($path, $lifetime);
 		}
-	}
-	
-	/**
-	 * Check the path against the white or blacklist
-	 * @param string $path
-	 * @param array $list
-	 * @return false|null|int Only false means not found
-	 */
-	public function check($path, $list) {
-		
-		// Loop through the list
-		foreach($list as $key => $val) {
-			
-			// Figure out the lifetime (only applicable to whitelist)
-			if (is_int($key)) {
-				$lifetime = null;
-				$pattern = $val;
-			} else {
-				$lifetime = $val;
-				$pattern = $key;
-			}
-			
-			// Check key against request
-			if (Str::is($pattern, $path)) return $lifetime;
-			
-		}
-		
-		// Not found
-		return false;
-		
 	}
 	
 	/**

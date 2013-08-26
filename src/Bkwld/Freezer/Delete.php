@@ -35,8 +35,11 @@ class Delete {
 	
 	/**
 	 * Delete only expired cached files
+	 * @param array $whitelist The freezer config file whitelist
 	 */
-	public function prune() {
+	public function prune($whitelist) {
+		
+		// Get all the items from the whitelist that expire
 		
 	}
 	

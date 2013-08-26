@@ -21,15 +21,25 @@ class Prune extends Command {
 	protected $description = 'Delete expired full page cache files';
 
 	/**
+	 * Inject some dependencies
+	 */
+	private $dir;
+	private $whitelist;
+	public function __construct($dir, $whitelist) {
+		$this->dir = $dir;
+		$this->whitelist = $whitelist;
+		parent::__construct();
+		
+	}
+
+	/**
 	 * Execute the console command.
 	 *
 	 * @return void
 	 */
-	public function fire()
-	{
-		//
-		Log::info('Running the example');
-		echo 'Running the example';
+	public function fire() {
+		$delete = new Delete($this->dir);
+		$this->info($delete->prune($this->whitelist).' expired cache files deleted');
 	}
 
 }
