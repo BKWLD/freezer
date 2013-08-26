@@ -17,7 +17,7 @@
 	 * the cache in MINUTES.  Put more restrictive patterns first.
 	 */
 	'whitelist' => array(
-		'features*' => 15,
+		// 'about*' => 15,
 		'*',
 	),
 	
@@ -28,7 +28,6 @@
 	 */
 	'blacklist' => array(
 		'admin*',
-		'about*',
 	),
 
 );

@@ -18,16 +18,29 @@ class Delete {
 	}
 	
 	/**
-	 * Delete ALL cache files. Some code from: http://stackoverflow.com/a/5769525/59160
+	 * Delete cache files that match a pattern
+	 * @param string $delete A Str::is style regexp to restrict deleting to
 	 */
-	public function clear() {
+	public function clear($pattern = null, $lifetime = null) {
+		
+		// Loop through directory
 		$i = 0;
-		foreach(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($this->dir), RecursiveIteratorIterator::CHILD_FIRST) as $f) {
+		$files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($this->dir), RecursiveIteratorIterator::CHILD_FIRST);
+		foreach($files as $f) {
+			
+			// Check if the pattern matches
+			$path = $f->getRealPath();
+			if ($pattern && !Str::is($this->dir.'/'.$pattern, $path)) continue;
+			
+			// See if the file or directory has expired
+			if ($lifetime && $f->getMTime() > time() - $lifetime*60) continue;
+			
+			// Delete the file or directory
 			if($f->isFile()) {
-				if (!unlink($f->getRealPath())) throw new Exception($f->getRealPath().' could not be deleted');
+				if (!unlink($path)) throw new Exception($path.' could not be deleted');
 				$i++;
-			} else if($f->isDir()) {
-				if (!rmdir($f->getRealPath())) throw new Exception($f->getRealPath().' could not be deleted');
+			} else if($f->isDir() && !$files->hasChildren()) {
+				if (!rmdir($path)) throw new Exception($path.' could not be deleted');
 				$i++;
 			}
 		}
@@ -43,22 +56,7 @@ class Delete {
 		// Loop through whitelist items that have an expiration
 		$i=0;
 		foreach($list->expiringPatterns() as $pattern => $lifetime) {
-			
-			// Loop through files
-			foreach(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($this->dir), RecursiveIteratorIterator::CHILD_FIRST) as $f) {
-				
-				// Check if file matches the pattern
-				$path = $f->getRealPath();
-				if (!Str::is($this->dir.'/'.$pattern, $path)) continue;
-				
-				// See if the pattern has expired
-				if ($f->getMTime() > time() - $lifetime*60) continue;
-				
-				// Delete the file
-				if (!unlink($path)) throw new Exception($path.' could not be deleted');
-				$i++;
-				
-			}
+			$i += $this->clear($pattern, $lifetime);
 		}
 		
 		// Return total deleted

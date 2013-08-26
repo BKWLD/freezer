@@ -22,13 +22,10 @@ class Prune extends Command {
 
 	/**
 	 * Inject some dependencies
-	 * @param string $dir
 	 * @param Bkwld\Freezer\Lists $lists
 	 */
-	private $dir;
 	private $lists;
-	public function __construct($dir, $lists) {
-		$this->dir = $dir;
+	public function __construct($lists) {
 		$this->lists = $lists;
 		parent::__construct();
 		
@@ -40,8 +37,7 @@ class Prune extends Command {
 	 * @return void
 	 */
 	public function fire() {
-		$delete = new Delete($this->dir);
-		$this->info($delete->prune($this->lists).' expired cache files deleted');
+		$this->info($this->getLaravel()->make('freezer.delete')->prune($this->lists).' expired cache files deleted');
 	}
 
 }

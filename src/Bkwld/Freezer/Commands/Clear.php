@@ -21,23 +21,12 @@ class Clear extends Command {
 	protected $description = 'Delete ALL full page cache files';
 
 	/**
-	 * Inject some dependencies
-	 */
-	private $dir;
-	public function __construct($dir) {
-		$this->dir = $dir;
-		parent::__construct();
-		
-	}
-
-	/**
 	 * Execute the console command.
 	 *
 	 * @return void
 	 */
 	public function fire() {
-		$delete = new Delete($this->dir);
-		$this->info($delete->clear().' cache files or folders deleted');
+		$this->info($this->getLaravel()->make('freezer.delete')->clear().' cache files or folders deleted');
 	}
 
 }

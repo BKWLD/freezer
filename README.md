@@ -14,8 +14,18 @@ Freezer creates full page caches that are **directly** serve-able by Apache.  In
 		RewriteRule ^.+$ uploads/freezer/$0.html [L]
 		RewriteCond %{DOCUMENT_ROOT}/uploads/freezer/_homepage\.html -f
 		RewriteRule ^$ uploads/freezer/_homepage.html [L]
+
+5. If you are going to use expiration times, setup a worker or cron job to run `php artisan freezer:prune` to delete stale caches.  Here is an example for cron that will check for stale caches every minute:
+
+		* * * * * /path/to/php /path/to/artisan freezer:prune
 		
 ## Config
+
+* `dir` - The directory that you want Freezer to write it's cache files to.  It must be writeable and within the document root.  In other words, within you /public directory.
+
+* `whitelist` - The a list of regex-like patterns that match URLs that should be cached.  For instance, if you want both /news and /news/15 to be cached, you would have an entry in the array for `news*`.  The pattern matching is done by Laravel's `Str::is()`.  If an entry in the array is just a pattern, the cache will never expire.  If you use a key-value pair of pattern-lifetime (where lifetime is in minutes), then you can have Freezer automatically expire your catch (as long as you have a Cron setup to auto-prune).  For example, `'news*' => 15` will expire all news caches after 15 minutes. 
+
+* `blacklist` - The blacklist is processed after the whitelist.  Enter patterns that should NOT be cached.  For instance, if `news/20` is in the blacklist and `news*` is in the whitelist, then all news articles but the one with id 20 will be full page cached.
 
 ## Usage
 
