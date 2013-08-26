@@ -12,6 +12,7 @@ class Create {
 	 * @param string $dir The directory to store cache files
 	 */
 	private $response;
+	private $dir;
 	public function __construct($response, $dir) {
 		$this->response = $response;
 		$this->dir = $dir;

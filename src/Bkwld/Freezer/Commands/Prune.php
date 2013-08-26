@@ -1,6 +1,7 @@
 <?php namespace Bkwld\Freezer\Commands;
 
 // Dependencies
+use Bkwld\Freezer\Delete;
 use Illuminate\Console\Command;
 
 class Prune extends Command {

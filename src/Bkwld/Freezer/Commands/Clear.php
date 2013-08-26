@@ -1,8 +1,7 @@
 <?php namespace Bkwld\Freezer\Commands;
 
 // Dependencies
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
+use Bkwld\Freezer\Delete;
 use Illuminate\Console\Command;
 
 class Clear extends Command {
@@ -37,23 +36,8 @@ class Clear extends Command {
 	 * @return void
 	 */
 	public function fire() {
-		
-		// Delete all the files in the dir.  Some code from:
-		// http://stackoverflow.com/a/5769525/59160
-		$i = 0;
-		foreach(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($this->dir), RecursiveIteratorIterator::CHILD_FIRST) as $f) {
-			if($f->isFile()) {
-				unlink($f->getRealPath());
-				$i++;
-			} else if($f->isDir()) {
-				rmdir($f->getRealPath());
-				$i++;
-			}
-		}
-		
-		// Output status
-		$this->info($i.' cache files or folders deleted');
-		
+		$delete = new Delete($this->dir);
+		$this->info($delete->clear().' cache files or folders deleted');
 	}
 
 }
