@@ -1,8 +1,6 @@
 <?php namespace Bkwld\Freezer;
 
-use Illuminate\Support\ServiceProvider;
-
-class FreezerServiceProvider extends ServiceProvider {
+class ServiceProvider extends \Illuminate\Support\ServiceProvider {
 
 	/**
 	 * Indicates if loading of the provider is deferred.

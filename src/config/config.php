@@ -4,7 +4,7 @@
 	 * Directory to store the caches. Must be writeable and within the document
 	 * root.
 	 */
-	'dir' => public_path().'/uploads/page_cache',
+	'dir' => public_path().'/uploads/freezer',
 
 	/**
 	 * List URL paths that should be cached.  These will be parsed against
