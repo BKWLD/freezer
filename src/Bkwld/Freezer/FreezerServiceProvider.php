@@ -27,7 +27,7 @@ class FreezerServiceProvider extends ServiceProvider {
 			$this->app->after(function($request, $response) use ($config) {
 				
 				// Compare the URL to the 
-				$create = new Create($response);
+				$create = new Create($response, $config['dir']);
 				$create->conditionallyCache($request, $config['whitelist'], $config['blacklist']);
 				
 			});

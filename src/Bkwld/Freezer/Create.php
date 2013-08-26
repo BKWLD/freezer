@@ -1,6 +1,7 @@
 <?php namespace Bkwld\Freezer;
 
 // Dependencies
+use Log;
 use Str;
 
 class Create {
@@ -8,10 +9,12 @@ class Create {
 	/**
 	 * Inject some dependencies
 	 * @param Illuminate\Http\Response $response
+	 * @param string $dir The directory to store cache files
 	 */
 	private $response;
-	public function __construct($response) {
+	public function __construct($response, $dir) {
 		$this->response = $response;
+		$this->dir = $dir;
 	}
 	
 	/**
@@ -69,9 +72,34 @@ class Create {
 	/**
 	 * Create the cache file
 	 * @param string $path
+	 * @param number $lifetime Expiration time in minutes
 	 */
 	public function cache($path, $lifetime = null) {
-		\Log::info('cache it');
+		
+		// Handle homepage
+		if ($path == '/') $path = '_homepage';
+		
+		// Calculate expiration timestamp
+		$expiration = '';
+		if ($lifetime) $expiration = '-'.(time() + $lifetime*60);
+		
+		// Create subdirectories recursively
+		$dir = dirname($path);
+		if ($dir == '.') $dir = $this->dir; // If no parents, it would have been '.'
+		else $dir = $this->dir.DIRECTORY_SEPARATOR.$dir;
+		if (!file_exists($dir) && mkdir($dir, 0775, true) === false) {
+			throw new Exception($dir.' directory could not be created');
+		}
+		
+		// Write the HTML file
+		$file = basename($path).$expiration.'.html';
+		if (file_put_contents($dir.DIRECTORY_SEPARATOR.$file, $this->response->getContent()) === false) {
+			throw new Exception($dir.'/'.$file.' cache could not be written');
+		}
+		
+		// Note that a caching has occured
+		Log::debug("Cache created for '$path' at {$dir}/{$file}. Lifetime is ".($lifetime?:'infinite.'));
+		
 	}
 	
 }
