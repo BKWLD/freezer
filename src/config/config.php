@@ -17,8 +17,8 @@
 	 * the cache in MINUTES.  Put more restrictive patterns first.
 	 */
 	'whitelist' => array(
-		// 'about*' => 15,
-		'*',
+		// 'about*' => 15, // Cache about and sub pages for 15 minutes
+		'*',               // Whitelist everything
 	),
 	
 	/**
@@ -27,7 +27,7 @@
 	 * pairs.
 	 */
 	'blacklist' => array(
-		'admin*',
+		'admin*',          // Don't cache admin pages
 	),
 
 );

@@ -39,7 +39,8 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider {
 		});
 		$this->commands(array('command.freezer.clear', 'command.freezer.prune'));
 		
-		// Create caches by listening for the laravel lifecyle response
+		// Create caches by listening for the laravel lifecyle response as long as there
+		// is a whitelist
 		if (count($config['whitelist'])) {
 			$this->app->after(function($request, $response) use ($dir, $lists) {
 				

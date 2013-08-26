@@ -25,8 +25,7 @@ class Delete {
 		
 		// Loop through directory
 		$i = 0;
-		$files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($this->dir), RecursiveIteratorIterator::CHILD_FIRST);
-		foreach($files as $f) {
+		foreach(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($this->dir), RecursiveIteratorIterator::CHILD_FIRST) as $f) {
 			
 			// Check if the pattern matches
 			$path = $f->getRealPath();
@@ -35,11 +34,13 @@ class Delete {
 			// See if the file or directory has expired
 			if ($lifetime && $f->getMTime() > time() - $lifetime*60) continue;
 			
-			// Delete the file or directory
-			if($f->isFile()) {
+			// Delete the file
+			if ($f->isFile()) {
 				if (!unlink($path)) throw new Exception($path.' could not be deleted');
 				$i++;
-			} else if($f->isDir() && !$files->hasChildren()) {
+			
+			// ... or directory.  Regarding glob ... hasChildren() was returning the correct val http://cl.ly/3F1g2A0E380r
+			} else if ($f->isDir() && !count(glob($path."/*"))) {
 				if (!rmdir($path)) throw new Exception($path.' could not be deleted');
 				$i++;
 			}
