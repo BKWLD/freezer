@@ -4,6 +4,7 @@
 use Log;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use Str;
 
 class Delete {
 	
@@ -23,10 +24,10 @@ class Delete {
 		$i = 0;
 		foreach(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($this->dir), RecursiveIteratorIterator::CHILD_FIRST) as $f) {
 			if($f->isFile()) {
-				if (!unlink($f->getRealPath())) throw new Exception('File could not be deleted');
+				if (!unlink($f->getRealPath())) throw new Exception($f->getRealPath().' could not be deleted');
 				$i++;
 			} else if($f->isDir()) {
-				if (!rmdir($f->getRealPath())) throw new Exception('Directory could not be deleted');
+				if (!rmdir($f->getRealPath())) throw new Exception($f->getRealPath().' could not be deleted');
 				$i++;
 			}
 		}
@@ -35,11 +36,33 @@ class Delete {
 	
 	/**
 	 * Delete only expired cached files
-	 * @param array $whitelist The freezer config file whitelist
+	 * @param Bkwld\Freezer\Lists $lists
 	 */
-	public function prune($whitelist) {
+	public function prune($list) {
 		
-		// Get all the items from the whitelist that expire
+		// Loop through whitelist items that have an expiration
+		$i=0;
+		foreach($list->expiringPatterns() as $pattern => $lifetime) {
+			
+			// Loop through files
+			foreach(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($this->dir), RecursiveIteratorIterator::CHILD_FIRST) as $f) {
+				
+				// Check if file matches the pattern
+				$path = $f->getRealPath();
+				if (!Str::is($this->dir.'/'.$pattern, $path)) continue;
+				
+				// See if the pattern has expired
+				if ($f->getMTime() > time() - $lifetime*60) continue;
+				
+				// Delete the file
+				if (!unlink($path)) throw new Exception($path.' could not be deleted');
+				$i++;
+				
+			}
+		}
+		
+		// Return total deleted
+		return $i;
 		
 	}
 	

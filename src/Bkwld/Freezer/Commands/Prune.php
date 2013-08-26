@@ -22,12 +22,14 @@ class Prune extends Command {
 
 	/**
 	 * Inject some dependencies
+	 * @param string $dir
+	 * @param Bkwld\Freezer\Lists $lists
 	 */
 	private $dir;
-	private $whitelist;
-	public function __construct($dir, $whitelist) {
+	private $lists;
+	public function __construct($dir, $lists) {
 		$this->dir = $dir;
-		$this->whitelist = $whitelist;
+		$this->lists = $lists;
 		parent::__construct();
 		
 	}
@@ -39,7 +41,7 @@ class Prune extends Command {
 	 */
 	public function fire() {
 		$delete = new Delete($this->dir);
-		$this->info($delete->prune($this->whitelist).' expired cache files deleted');
+		$this->info($delete->prune($this->lists).' expired cache files deleted');
 	}
 
 }

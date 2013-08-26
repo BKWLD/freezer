@@ -30,6 +30,8 @@ class Lists {
 	
 	/**
 	 * Check the whitelist
+	 * @param string $path
+	 * @return false|null|int Only false means not found
 	 */
 	public function checkWhiteAndGetLifetime($path) {
 		
@@ -57,12 +59,26 @@ class Lists {
 	
 	/**
 	 * Check the blacklist
+	 * @param string $path
+	 * @return boolean
 	 */
 	public function checkBlack($path) {
 		foreach($this->black as $pattern) {
-			if (Str::is($pattern, $path)) return $lifetime;
+			if (Str::is($pattern, $path)) return true;
 		}
 		return false;
+	}
+	
+	/**
+	 * Get all patterns that have an expiration
+	 * @return array The list of whitelist patterns that have an expiration
+	 */
+	public function expiringPatterns() {
+		$new = array();
+		foreach($this->white as $key => $val) {
+			if (!is_int($key)) $new[$key] = $val;
+		}
+		return $new;
 	}
 	
 }

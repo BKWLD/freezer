@@ -14,7 +14,7 @@
 	 * 
 	 * Items can just be a simple string path or a key value pair with the
 	 * key being the path pattern and the value being the expiration time for
-	 * the cache in minutes.  Put more restrictive patterns first.
+	 * the cache in MINUTES.  Put more restrictive patterns first.
 	 */
 	'whitelist' => array(
 		'features*' => 15,
