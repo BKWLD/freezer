@@ -31,6 +31,16 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider {
 			});
 		}
 		
+		// Register commands.  Syntax from http://forums.laravel.io/viewtopic.php?pid=50215#p50215
+		// When I was doing Artisan::add() I got seg fault 11.
+		$this->app['command.freezer.clear'] = $this->app->share(function($app) use ($config) {
+			return new \Bkwld\Freezer\Commands\Clear($config['dir']);
+		});
+		$this->app['command.freezer.prune'] = $this->app->share(function($app) use ($config) {
+			return new \Bkwld\Freezer\Commands\Prune($config['dir'], $config['whitelist']);
+		});
+		$this->commands(array('command.freezer.clear', 'command.freezer.prune'));
+		
 	}
 
 	/**

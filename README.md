@@ -7,10 +7,16 @@ Freezer creates full page caches that are **directly** serve-able by Apache.  In
 1. Add it to your composer.json: "bkwld/freezer": "~1.0"
 2. Add the service provider to you app.php config file providers: `'Bkwld\Freezer\ServiceProvider',`
 3. Add the facade to your app.php config file's aliases: `'Freezer' => 'Bkwld\Freezer\Facade',`
-2. Add this to your public/.htaccess file **BEFORE** the Laravel rules involving index.php:
+4. Add this to your public/.htaccess file **BEFORE** the Laravel rules involving index.php:
 
 		# Serve Freezer full page cache files
 		RewriteCond %{DOCUMENT_ROOT}/uploads/freezer/$0\.html -f
 		RewriteRule ^.+$ uploads/freezer/$0.html [L]
 		RewriteCond %{DOCUMENT_ROOT}/uploads/freezer/_homepage\.html -f
 		RewriteRule ^$ uploads/freezer/_homepage.html [L]
+		
+## Config
+
+## Usage
+
+## Known limitations

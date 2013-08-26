@@ -79,10 +79,6 @@ class Create {
 		// Handle homepage
 		if ($path == '/') $path = '_homepage';
 		
-		// Calculate expiration timestamp
-		$expiration = '';
-		if ($lifetime) $expiration = '-'.(time() + $lifetime*60);
-		
 		// Create subdirectories recursively
 		$dir = dirname($path);
 		if ($dir == '.') $dir = $this->dir; // If no parents, it would have been '.'
@@ -92,7 +88,7 @@ class Create {
 		}
 		
 		// Write the HTML file
-		$file = basename($path).$expiration.'.html';
+		$file = basename($path).'.html';
 		if (file_put_contents($dir.DIRECTORY_SEPARATOR.$file, $this->response->getContent()) === false) {
 			throw new Exception($dir.'/'.$file.' cache could not be written');
 		}
