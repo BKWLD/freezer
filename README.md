@@ -48,4 +48,4 @@ As mentioned, in the introduction, the primary use-case this packages was design
 
 This snippet will dump **all** of the cache whenever you create, update, or delete rows from your database.  Combine this with a whitelist on everything (`*`) except your admin directory (blacklist `admin*`) and you have a system where all your front-facing pages will get cached but will still immediately see any changes made in your admin.  You don't even need to setup a cron job with this approach.
 
-Remember to clear your Freezer cache (`php artisan freezer:clear`) when deploying new code to the server.
+Remember to clear your Freezer cache on the server (`php artisan freezer:clear`) when deploying new code.
