@@ -38,6 +38,16 @@ The use-case that Freezer was designed for was small sites that don't see a ton 
 
 **Note**: There is a local/config.php file that comes in the package that disables Freezer locally (for your "local" enviornment) by having an empty whitelist.
 
+## API
+
+#### `Freezer::clear($pattern, $lifetime)`
+
+Delete cache files that match a pattern or age
+
+- `$pattern` [string] A `Str::is()` style regexp matching the request path that was cached
+- `$lifetime` [number] Only clear if the cache was created less than this lifetime
+
+
 ## Usage
 
 As mentioned, in the introduction, the primary use-case this packages was designed for is sites that don't receive a ton of updates.  In other words, not user-generated-content based sites.  One easy was to get up and runnig with Freezer is to put this in your app/start/global.php file:

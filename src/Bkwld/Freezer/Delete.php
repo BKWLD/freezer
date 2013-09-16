@@ -18,8 +18,9 @@ class Delete {
 	}
 	
 	/**
-	 * Delete cache files that match a pattern
-	 * @param string $delete A Str::is style regexp to restrict deleting to
+	 * Delete cache files that match a pattern or age
+	 * @param string $delete A Str::is() style regexp matching the request path that was cached
+	 * @param number $lifetime Only clear if the cache was created less than this lifetime
 	 */
 	public function clear($pattern = null, $lifetime = null) {
 		
