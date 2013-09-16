@@ -43,8 +43,10 @@ The use-case that Freezer was designed for was small sites that don't see a ton 
 As mentioned, in the introduction, the primary use-case this packages was designed for is sites that don't receive a ton of updates.  In other words, not user-generated-content based sites.  One easy was to get up and runnig with Freezer is to put this in your app/start/global.php file:
 
 	// Delete all Freezer caches when a model changes
-	Event::listen('eloquent.saving*', function($p, $e) { Freezer::clear(); });
-	Event::listen('eloquent.deleted*', function($p, $e) { Freezer::clear(); });
+	// - $m is the model instance that is being acted upon
+	// - $e is the event name (ex: "e:eloquent.saving: Article"
+	Event::listen('eloquent.saving*', function($m, $e) { Freezer::clear(); });
+	Event::listen('eloquent.deleted*', function($m, $e) { Freezer::clear(); });
 
 This snippet will dump **all** of the cache whenever you create, update, or delete rows from your database.  Combine this with a whitelist on everything (`*`) except your admin directory (blacklist `admin*`) and you have a system where all your front-facing pages will get cached but will still immediately see any changes made in your admin.  You don't even need to setup a cron job with this approach.
 
