@@ -98,6 +98,9 @@ class Delete {
 		// Loop through directory
 		foreach(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($this->dir), RecursiveIteratorIterator::CHILD_FIRST) as $f) {
 			
+			// File must be either an html file or a directory
+			if (!$f->isDir() && !Str::endsWith($f->getFilename(), '.html')) continue;
+			
 			// Check if the pattern matches
 			if ($pattern && !Str::is($this->dir.'/'.$pattern.'.html', $f->getRealPath())) continue;
 			
