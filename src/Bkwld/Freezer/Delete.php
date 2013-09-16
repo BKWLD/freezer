@@ -64,7 +64,6 @@ class Delete {
 			$html = $this->client->getResponse()->getContent();
 			
 			// Replace the cache content with the html that was found
-			Log::info('writing');
 			$f->openFile('w')->fwrite($html);
 		}
 		return $i;
