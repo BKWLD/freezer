@@ -33,7 +33,7 @@ class Delete {
 			
 			// Check if the pattern matches
 			$path = $f->getRealPath();
-			if ($pattern && !Str::is($this->dir.'/'.$pattern, $path)) continue;
+			if ($pattern && !Str::is($this->dir.'/'.$pattern.'.html', $path)) continue;
 			
 			// See if the file or directory has expired
 			if ($lifetime && $f->getMTime() > time() - $lifetime*60) continue;
