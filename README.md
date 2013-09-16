@@ -47,6 +47,12 @@ Delete cache files that match a pattern or age
 - `$pattern` [string] A `Str::is()` style regexp matching the request path that was cached
 - `$lifetime` [number] Only clear if the cache was created less than this lifetime
 
+#### `Freezer::rebuild($pattern, $lifetime)`
+
+Rebuild cache files that match a pattern or age.  This works by simulating a GET request to the same route and replacing the cache with the response.
+
+- `$pattern` [string] A `Str::is()` style regexp matching the request path that was cached
+- `$lifetime` [number] Only clear if the cache was created less than this lifetime
 
 ## Usage
 
@@ -54,9 +60,9 @@ As mentioned, in the introduction, the primary use-case this packages was design
 
 	// Delete all Freezer caches when a model changes
 	// - $m is the model instance that is being acted upon
-	// - $e is the event name (ex: "e:eloquent.saving: Article"
-	Event::listen('eloquent.saving*', function($m, $e) { Freezer::clear(); });
-	Event::listen('eloquent.deleted*', function($m, $e) { Freezer::clear(); });
+	// - $e is the event name (ex: "e:eloquent.saved: Article"
+	Event::listen('eloquent.saved*', function($m, $e) { Freezer::rebuild(); });
+	Event::listen('eloquent.deleted*', function($m, $e) { Freezer::rebuild(); });
 
 This snippet will dump **all** of the cache whenever you create, update, or delete rows from your database.  Combine this with a whitelist on everything (`*`) except your admin directory (blacklist `admin*`) and you have a system where all your front-facing pages will get cached but will still immediately see any changes made in your admin.  You don't even need to setup a cron job with this approach.
 

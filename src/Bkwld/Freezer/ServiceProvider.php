@@ -1,5 +1,8 @@
 <?php namespace Bkwld\Freezer;
 
+// Dependencies
+use Illuminate\Foundation\Testing\Client;
+
 class ServiceProvider extends \Illuminate\Support\ServiceProvider {
 
 	/**
@@ -19,14 +22,14 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider {
 		
 		// Get freezer config
 		$config = $this->app->make('config')->get('freezer::config');
-		$dir = $config['dir'];
+		$dir = realpath($config['dir']);
 
 		// Create a lists object
 		$lists = new Lists($config['whitelist'], $config['blacklist']);
 		
 		// Register delete instance
 		$this->app->singleton('freezer.delete', function($app) use ($dir) {
-			return new Delete($dir);
+			return new Delete($dir, new Client($app), $app['url']->to('/'));
 		});
 		
 		// Register commands.  Syntax from http://forums.laravel.io/viewtopic.php?pid=50215#p50215
@@ -59,7 +62,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider {
 	 * @return array
 	 */
 	public function provides() {
-		return array('freezer', 'freezer.delete', 'command.freezer.clear', 'command.freezer.prune');
+		return array('freezer', 'freezer.delete', 'freezer', 'command.freezer.clear', 'command.freezer.prune');
 	}
 
 }
