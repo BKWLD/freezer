@@ -57,7 +57,9 @@ class Delete {
 			if (!$f->isFile()) continue;
 			
 			// Get the relative path to the cache. This leaves a leading slash and removes the .html extension
-			$uri = $this->host.substr($f->getRealPath(), strlen($this->dir), -5);
+			$path = substr($f->getRealPath(), strlen($this->dir), -5); // Has leading slash
+			if ($path == '/_homepage') $path = '';
+			$uri = $this->host.$path;
 			
 			// Simulate a request
 			$this->client->request('GET', $uri);
