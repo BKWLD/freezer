@@ -23,6 +23,12 @@ class Facade extends \Illuminate\Support\Facades\Facade {
 	 * Skip caching the next request
 	 */
 	public static function skipNext() {
+		
+		// Make sure this path is one that WOULD be cached ordinarily
+		$path = static::$app->make('request')->path();
+		if (static::$app->make('freezer.lists')->checkAndGetLifetime($path) === false) return;
+		
+		// Set cookie to skip next
 		$cookie = static::$app->make('cookie')->make(ServiceProvider::SKIP_COOKIE, true);
 		static::$app->after(function($request, $response) use ($cookie) {
 			$response->withCookie($cookie);

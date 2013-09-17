@@ -31,6 +31,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider {
 
 		// Create a lists object
 		$lists = new Lists($config['whitelist'], $config['blacklist']);
+		$this->app->instance('freezer.lists', $lists);
 		
 		// Register delete instance
 		$this->app->singleton('freezer.delete', function($app) use ($dir) {
@@ -76,7 +77,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider {
 	 * @return array
 	 */
 	public function provides() {
-		return array('freezer', 'freezer.delete', 'freezer', 'command.freezer.clear', 'command.freezer.prune');
+		return array('freezer', 'freezer.delete', 'freezer.lists', 'command.freezer.clear', 'command.freezer.prune');
 	}
 
 }
