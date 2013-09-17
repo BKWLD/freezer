@@ -19,6 +19,15 @@ class Facade extends \Illuminate\Support\Facades\Facade {
 		return static::$app->make('freezer.delete')->rebuild($pattern, $lifetime);
 	}
 	
+	/**
+	 * Skip caching the next request
+	 */
+	public static function skipNext() {
+		$cookie = static::$app->make('cookie')->make(ServiceProvider::SKIP_COOKIE, true);
+		static::$app->after(function($request, $response) use ($cookie) {
+			$response->withCookie($cookie);
+		});
+	}
 	
 	/**
 	 * Get the registered name of the component.

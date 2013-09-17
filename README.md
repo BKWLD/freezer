@@ -17,8 +17,12 @@ The use-case that Freezer was designed for was small sites that don't see a ton 
 4. Add this to your public/.htaccess file **BEFORE** the Laravel rules involving index.php:
 
 		# Serve Freezer full page cache files
+		RewriteCond %{HTTP_COOKIE} !freezer-skip [NC]
+		RewriteCond %{REQUEST_METHOD} GET
 		RewriteCond %{DOCUMENT_ROOT}/uploads/freezer/$0\.html -f
 		RewriteRule ^.+$ uploads/freezer/$0.html [L]
+		RewriteCond %{HTTP_COOKIE} !freezer-skip [NC]
+		RewriteCond %{REQUEST_METHOD} GET
 		RewriteCond %{DOCUMENT_ROOT}/uploads/freezer/_homepage\.html -f
 		RewriteRule ^$ uploads/freezer/_homepage.html [L]
 
@@ -54,6 +58,20 @@ Rebuild cache files that match a pattern or age.  This works by simulating a GET
 - `$pattern` [string] A `Str::is()` style regexp matching the request path that was cached
 - `$lifetime` [number] Only clear if the cache was created less than this lifetime
 
+#### `Freezer::skipNext()`
+
+Adds a cookie to the response that tells Apache not to use the cache to respond to the *next* request.  Freezer then deletes this cookie, meaning *only* the subsequent request will be skipped.
+
+## Commands
+
+#### `php artisan freezer:clear`
+
+Delets all cache files
+
+#### `php artisan freezer:prune`
+
+Deletes only the cache files that have expired based on your config file rules.
+
 ## Usage
 
 As mentioned, in the introduction, the primary use-case this packages was designed for is sites that don't receive a ton of updates.  In other words, not user-generated-content based sites.  One easy was to get up and runnig with Freezer is to put this in your app/start/global.php file:
@@ -65,5 +83,13 @@ As mentioned, in the introduction, the primary use-case this packages was design
 	Event::listen('eloquent.deleted*', function($m, $e) { Freezer::rebuild(); });
 
 This snippet will dump **all** of the cache whenever you create, update, or delete rows from your database.  Combine this with a whitelist on everything (`*`) except your admin directory (blacklist `admin*`) and you have a system where all your front-facing pages will get cached but will still immediately see any changes made in your admin.  You don't even need to setup a cron job with this approach.
+
+Another handy thing to have in your app/start/global.php is this:
+
+	// Skip caching the next page after any non-GET.  For instance, don't cache
+	// the page that is shown after submitting a form
+	if (Request::getMethod() != 'GET') Freezer::skipNext();
+
+This will skip caching or serving all requests that follow a POST, PUT, or DELETE.
 
 Remember to clear your Freezer cache on the server (`php artisan freezer:clear`) when deploying new code.
