@@ -2,6 +2,11 @@
 class Facade extends \Illuminate\Support\Facades\Facade {
 	
 	/**
+	 * The cookie name
+	 */
+	const SKIP_COOKIE = 'freezer-skip';
+	
+	/**
 	 * Clear an item from the cache
 	 * @param string $delete A Str::is() style regexp matching the request path that was cached
 	 * @param number $lifetime Only clear if the cache was created less than this lifetime
@@ -29,7 +34,7 @@ class Facade extends \Illuminate\Support\Facades\Facade {
 		if (static::$app->make('freezer.lists')->checkAndGetLifetime($path) === false) return;
 		
 		// Set cookie to skip next
-		$cookie = static::$app->make('cookie')->make(ServiceProvider::SKIP_COOKIE, true);
+		$cookie = static::$app->make('cookie')->make(self::SKIP_COOKIE, true);
 		static::$app->after(function($request, $response) use ($cookie) {
 			$response->withCookie($cookie);
 		});

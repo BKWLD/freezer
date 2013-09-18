@@ -6,18 +6,6 @@ use Illuminate\Foundation\Testing\Client;
 class ServiceProvider extends \Illuminate\Support\ServiceProvider {
 
 	/**
-	 * The cookie name
-	 */
-	const SKIP_COOKIE = 'freezer-skip';
-
-	/**
-	 * Indicates if loading of the provider is deferred.
-	 *
-	 * @var bool
-	 */
-	protected $defer = false;
-
-	/**
 	 * Register the service provider.
 	 *
 	 * @return void
@@ -48,27 +36,29 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider {
 		});
 		$this->commands(array('command.freezer.clear', 'command.freezer.prune'));
 		
-		// Determine if we have been instructed to skip this request.  Skipping
-		// only affects a single request, so delete the cookie imediately
-		if ($skip = $this->app['cookie']->has(self::SKIP_COOKIE)) {
-			$cookie = $this->app['cookie']->forget(self::SKIP_COOKIE);
-			$this->app->after(function($request, $response) use ($cookie) {
-				$response->withCookie($cookie);
-			});
-		}
+	}
+	
+	/**
+	 * Register event listeners
+	 */
+	public function boot() {
+		
+		// Get config (again)
+		$config = $this->app->make('config')->get('freezer::config');
+		$dir = realpath($config['dir']);
 		
 		// Create caches by listening for the laravel lifecyle response as long as there
 		// is a whitelist
-		if (count($config['whitelist']) && !$skip) {
-			$this->app->after(function($request, $response) use ($dir, $lists) {
+		if (count($config['whitelist'])) {
+			$lists = $this->app->make('freezer.lists');
+			$cookies = $this->app->make('cookie');
+			$this->app->after(function($request, $response) use ($dir, $lists, $cookies) {
 				
-				// Compare the URL to the 
+				// Init create class and check if we should cache this request
 				$create = new Create($response, $dir);
-				$create->conditionallyCache($request, $lists);
-				
+				$create->conditionallyCache($request, $lists, $cookies);
 			});
 		}
-		
 	}
 
 	/**
