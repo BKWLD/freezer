@@ -38,7 +38,8 @@ class Create {
 		
 		// Only allow requests with NO arguments, since we don't namespace
 		// the caches with the GET args
-		if (!empty($request->input())) return false;
+		$input = $request->input();
+		if (!empty($input)) return false;
 		
 		// Check white and blacklists
 		$path = $request->path();
