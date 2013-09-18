@@ -36,6 +36,10 @@ class Create {
 		// Only allow GETs
 		if ($request->getMethod() != 'GET') return false;
 		
+		// Only allow requests with NO arguments, since we don't namespace
+		// the caches with the GET args
+		if (!empty($request->input())) return false;
+		
 		// Check white and blacklists
 		$path = $request->path();
 		$lifetime = $lists->checkAndGetLifetime($path);
