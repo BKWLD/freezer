@@ -15,7 +15,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider {
 		
 		// Get freezer config
 		$config = $this->app->make('config')->get('freezer::config');
-		$dir = realpath($config['dir']);
+		$dir = $config['dir'];
 
 		// Create a lists object
 		$lists = new Lists($config['whitelist'], $config['blacklist']);
@@ -45,7 +45,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider {
 		
 		// Get config (again)
 		$config = $this->app->make('config')->get('freezer::config');
-		$dir = realpath($config['dir']);
+		$dir = $config['dir'];
 		
 		// Create caches by listening for the laravel lifecyle response as long as there
 		// is a whitelist
