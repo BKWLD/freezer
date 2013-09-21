@@ -64,6 +64,8 @@ Adds a cookie to the response that tells Apache not to use the cache to respond 
 
 ## Commands
 
+Note: You will probably need to set explicit app/config/app.php `url` properties for each of your enviornments so that any URLs rendered within your cached pages know what the domain of the site is.
+
 #### `php artisan freezer:clear`
 
 Delets all cache files
