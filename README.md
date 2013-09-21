@@ -36,7 +36,7 @@ The use-case that Freezer was designed for was small sites that don't see a ton 
 
 * `dir` - The directory that you want Freezer to write it's cache files to.  It must be writeable and within the document root.  In other words, within you /public directory.
 
-* `whitelist` - The a list of regex-like patterns that match URLs that should be cached.  For instance, if you want both /news and /news/15 to be cached, you would have an entry in the array for `news*`.  The pattern matching is done by Laravel's `Str::is()`.  If an entry in the array is just a pattern, the cache will never expire.  If you use a key-value pair of pattern-lifetime (where lifetime is in minutes), then you can have Freezer automatically expire your catch (as long as you have a Cron setup to auto-prune).  For example, `'news*' => 15` will expire all news caches after 15 minutes. 
+* `whitelist` - The a list of regex patterns that match URLs that should be cached.  For instance, if you want both /news and /news/15 to be cached, you would have an entry in the array for `news(/\d+)?`.  `^` and `\z` are automatically added to the parttern to match against the full url path.  If an entry in the array is just a pattern, the cache will never expire.  If you use a key-value pair of pattern-lifetime (where lifetime is in minutes), then you can have Freezer automatically expire your catch (as long as you have a Cron setup to auto-prune).  For example, `'news*' => 15` will expire all news caches after 15 minutes. 
 
 * `blacklist` - The blacklist is processed after the whitelist.  Enter patterns that should NOT be cached.  For instance, if `news/20` is in the blacklist and `news*` is in the whitelist, then all news articles but the one with id 20 will be full page cached.
 
@@ -48,14 +48,14 @@ The use-case that Freezer was designed for was small sites that don't see a ton 
 
 Delete cache files that match a pattern or age
 
-- `$pattern` [string] A `Str::is()` style regexp matching the request path that was cached
+- `$pattern` [string] A regexp matching the request path that was cached
 - `$lifetime` [number] Only clear if the cache was created less than this lifetime
 
 #### `Freezer::rebuild($pattern, $lifetime)`
 
 Rebuild cache files that match a pattern or age.  This works by simulating a GET request to the same route and replacing the cache with the response.
 
-- `$pattern` [string] A `Str::is()` style regexp matching the request path that was cached
+- `$pattern` [string] A regexp matching the request path that was cached
 - `$lifetime` [number] Only clear if the cache was created less than this lifetime
 
 #### `Freezer::skipNext()`

@@ -7,17 +7,14 @@
 	'dir' => public_path().'/uploads/freezer',
 
 	/**
-	 * List URL paths that should be cached.  These will be parsed against
-	 * Laravel's Str::is() function, so simple * or full regexp can be used.
-	 * This also means that they must include the beginning.  Do not
-	 * include a leading slash.
+	 * List URL patterns that should be cached. Do not include a leading slash.
 	 * 
 	 * Items can just be a simple string path or a key value pair with the
 	 * key being the path pattern and the value being the expiration time for
 	 * the cache in MINUTES.  Put more restrictive patterns first.
 	 */
 	'whitelist' => array(
-		// 'about*' => 15, // Cache about and sub pages for 15 minutes
+		// 'about.*' => 15, // Cache about and sub pages for 15 minutes
 		'*',               // Whitelist everything
 	),
 	

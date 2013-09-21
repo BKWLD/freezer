@@ -1,10 +1,8 @@
 <?php namespace Bkwld\Freezer;
 
 // Dependencies
-use Log;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
-use Str;
 
 class Delete {
 	
@@ -29,7 +27,7 @@ class Delete {
 	 */
 	public function clear($pattern = null, $lifetime = null) {
 		$i = 0;
-		foreach($this->filter() as $f) {
+		foreach($this->filter($pattern, $lifetime) as $f) {
 			$path = $f->getRealPath();
 			
 			// Delete the file
@@ -53,7 +51,7 @@ class Delete {
 	 */
 	public function rebuild($pattern = null, $lifetime = null) {
 		$i = 0;
-		foreach($this->filter() as $f) {
+		foreach($this->filter($pattern, $lifetime) as $f) {
 			if (!$f->isFile()) continue;
 			
 			// Get the relative path to the cache. This leaves a leading slash and removes the .html extension
@@ -61,12 +59,10 @@ class Delete {
 			if ($path == '/_homepage') $path = '';
 			$uri = $this->host.$path;
 			
-			// Simulate a request
+			// Simulate a request.  This also will trigger Freezer to generate a new cache automatically
+			// for that URL.  So there is no need to deal with the response from the call.
 			$this->client->request('GET', $uri);
-			$html = $this->client->getResponse()->getContent();
 			
-			// Replace the cache content with the html that was found
-			$f->openFile('w')->fwrite($html);
 		}
 		return $i;
 	}
@@ -101,10 +97,10 @@ class Delete {
 		foreach(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($this->dir), RecursiveIteratorIterator::CHILD_FIRST) as $f) {
 			
 			// File must be either an html file or a directory
-			if (!$f->isDir() && !Str::endsWith($f->getFilename(), '.html')) continue;
+			if (!$f->isDir() && !preg_match('#\.html\z#', $f->getFilename())) continue;
 			
 			// Check if the pattern matches
-			if ($pattern && !Str::is($this->dir.'/'.$pattern, $f->getRealPath())) continue;
+			if ($pattern && !preg_match('#^'.$this->dir.'/'.$pattern.'(\.html)?\z#', $f->getRealPath())) continue;
 			
 			// See if the file or directory has expired
 			if ($lifetime && $f->getMTime() > time() - $lifetime*60) continue;
