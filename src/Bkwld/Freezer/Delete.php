@@ -36,7 +36,7 @@ class Delete {
 				$i++;
 			
 			// ... or directory.  Regarding glob ... hasChildren() was returning the correct val http://cl.ly/3F1g2A0E380r
-			} else if ($f->isDir() && !count(glob($path."/*"))) {
+			} else if ($f->isDir() && count(scandir($path)) == 2) { // 2 because "." and ".." will always be present
 				if (!rmdir($path)) throw new Exception($path.' could not be deleted');
 				$i++;
 			}
