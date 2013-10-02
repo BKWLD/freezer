@@ -1,4 +1,4 @@
-<? return array(
+<?php return array(
 
 	/**
 	 * Directory to store the caches. Must be writeable and within the document
