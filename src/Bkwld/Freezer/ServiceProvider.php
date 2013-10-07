@@ -1,8 +1,5 @@
 <?php namespace Bkwld\Freezer;
 
-// Dependencies
-use Illuminate\Foundation\Testing\Client;
-
 class ServiceProvider extends \Illuminate\Support\ServiceProvider {
 
 	/**
@@ -23,7 +20,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider {
 		
 		// Register delete instance
 		$this->app->singleton('freezer.delete', function($app) use ($dir) {
-			return new Delete($dir, new Client($app), $app['url']->to('/'));
+			return new Delete($dir, $app);
 		});
 		
 		// Register commands.  Syntax from http://forums.laravel.io/viewtopic.php?pid=50215#p50215

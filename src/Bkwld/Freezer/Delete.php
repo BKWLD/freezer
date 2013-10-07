@@ -3,21 +3,24 @@
 // Dependencies
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use Illuminate\Foundation\Testing\Client;
 
 class Delete {
 	
 	/**
 	 * Inject some dependencies
 	 * @param string $dir The directory to store cache files
-	 * @param Illuminate\Foundation\Testing\Client $client
-	 * @param string $host Like "http://whatever.com"
+	 * @param Illuminate\Foundation\Application $app
 	 */
 	private $dir;
-	private $client;
-	public function __construct($dir, $client, $host) {
+	private $app;
+	private $client; // Illuminate\Foundation\Testing\Client
+	private $host; // string $host Like "http://whatever.com"
+	public function __construct($dir, $app) {
 		$this->dir = $dir;
-		$this->client = $client;
-		$this->host = $host;
+		$this->app = $app;
+		$this->client = new Client($app);
+		$this->host = $app['url']->to('/');
 	}
 	
 	/**
@@ -51,6 +54,7 @@ class Delete {
 	 */
 	public function rebuild($pattern = null, $lifetime = null) {
 		$i = 0;
+		$input = $this->app['request']->input();
 		foreach($this->filter($pattern, $lifetime) as $f) {
 			if (!$f->isFile()) continue;
 			
@@ -64,6 +68,16 @@ class Delete {
 			$this->client->request('GET', $uri);
 			
 		}
+		
+		// The simulated request wipes the Input data.  So replace it back to what it
+		// was so the rest of the app can use.  For what it's worth, this didn't work
+		// until I referenced the latest 'request' object by passing $app into this class.
+		// If I built a request in the serivce provider and passed it to this class, this did
+		// not work.  I think that the client->request creates to reques objects in the
+		// application.
+		$this->app['request']->replace($input);
+		
+		// Return the number rebuild
 		return $i;
 	}
 	
