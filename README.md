@@ -48,15 +48,15 @@ The use-case that Freezer was designed for was small sites that don't see a ton 
 
 Delete cache files that match a pattern or age
 
-- `$pattern` [string] A regexp matching the request path that was cached
-- `$lifetime` [number] Only clear if the cache was created less than this lifetime
+- `$pattern` [string, optional] A regexp matching the request path that was cached
+- `$lifetime` [number, optional] Only clear if the cache was created less than this lifetime
 
 #### `Freezer::rebuild($pattern, $lifetime)`
 
 Rebuild cache files that match a pattern or age.  This works by simulating a GET request to the same route and replacing the cache with the response.
 
-- `$pattern` [string] A regexp matching the request path that was cached
-- `$lifetime` [number] Only clear if the cache was created less than this lifetime
+- `$pattern` [string, optional] A regexp matching the request path that was cached
+- `$lifetime` [number, optional] Only clear if the cache was created less than this lifetime
 
 #### `Freezer::skipNext()`
 
