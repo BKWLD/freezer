@@ -58,6 +58,14 @@ Rebuild cache files that match a pattern or age.  This works by simulating a GET
 - `$pattern` [string, optional] A regexp matching the request path that was cached
 - `$lifetime` [number, optional] Only clear if the cache was created less than this lifetime
 
+#### `Freezer::debounce($operation, $pattern, $lifetime)`
+
+This is alternate way to invoke `clear` or `rebuild` that puts the call in a queue that gets processed at the end of the Laravel request.  The queue is deduped as you add to it.  Thus, you can have event listeners call (for example) `Freezer::rebuild()` many times, but only rebuild your cache once.
+
+- `$operation` [string] Either 'clear' or 'rebuild'
+- `$pattern` [string, optional] A regexp matching the request path that was cached
+- `$lifetime` [number, optional] Only clear if the cache was created less than this lifetime
+
 #### `Freezer::skipNext()`
 
 Adds a cookie to the response that tells Apache not to use the cache to respond to the *next* request.  Freezer then deletes this cookie, meaning *only* the subsequent request will be skipped.
@@ -81,8 +89,8 @@ As mentioned, in the introduction, the primary use-case this packages was design
 	// Delete all Freezer caches when a model changes
 	// - $m is the model instance that is being acted upon
 	// - $e is the event name (ex: "e:eloquent.saved: Article"
-	Event::listen('eloquent.saved*', function($m, $e) { Freezer::rebuild(); });
-	Event::listen('eloquent.deleted*', function($m, $e) { Freezer::rebuild(); });
+	Event::listen('eloquent.saved*', function($m, $e) { Freezer::debounce('rebuild'); });
+	Event::listen('eloquent.deleted*', function($m, $e) { Freezer::debounce('rebuild'); });
 
 This snippet will dump **all** of the cache whenever you create, update, or delete rows from your database.  Combine this with a whitelist on everything (`*`) except your admin directory (blacklist `admin*`) and you have a system where all your front-facing pages will get cached but will still immediately see any changes made in your admin.  You don't even need to setup a cron job with this approach.
 

@@ -2,13 +2,14 @@
 class Facade extends \Illuminate\Support\Facades\Facade {
 	
 	/**
-	 * The cookie name
+	 * Shared constants
 	 */
-	const SKIP_COOKIE = 'freezer-skip';
+	const SKIP_COOKIE = 'freezer-skip'; // The cookie name
+	const USER_AGENT = 'BKWLD/Freezer'; // The user agent that the rebuilds come from
 	
 	/**
 	 * Clear an item from the cache
-	 * @param string $delete A Str::is() style regexp matching the request path that was cached
+	 * @param string $pattern A Str::is() style regexp matching the request path that was cached
 	 * @param number $lifetime Only clear if the cache was created less than this lifetime
 	 */
 	public static function clear($pattern = null, $lifetime = null) {
@@ -17,7 +18,7 @@ class Facade extends \Illuminate\Support\Facades\Facade {
 	
 	/**
 	 * Rebuild an item from the cache
-	 * @param string $delete A Str::is() style regexp matching the request path that was cached
+	 * @param string $pattern A Str::is() style regexp matching the request path that was cached
 	 * @param number $lifetime Only clear if the cache was created less than this lifetime
 	 */
 	public static function rebuild($pattern = null, $lifetime = null) {
@@ -38,6 +39,16 @@ class Facade extends \Illuminate\Support\Facades\Facade {
 		static::$app->after(function($request, $response) use ($cookie) {
 			$response->withCookie($cookie);
 		});
+	}
+	
+	/**
+	 * Don't allow duplicate calls to clear or rebuild to be executed on the same request
+	 * @param string $operation clear|rebuild
+	 * @param string $pattern A Str::is() style regexp matching the request path that was cached
+	 * @param number $lifetime Only clear if the cache was created less than this lifetime
+	 */
+	public static function debounce($operation, $pattern = null, $lifetime = null) {
+		return static::$app->make('freezer.queue')->add($operation, $pattern, $lifetime);
 	}
 	
 	/**

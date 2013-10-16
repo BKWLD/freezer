@@ -23,6 +23,11 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider {
 			return new Delete($dir, $app);
 		});
 		
+		// Register queue instance
+		$this->app->singleton('freezer.queue', function($app) {
+			return new Queue($app->make('freezer.delete'));
+		});
+		
 		// Register commands.  Syntax from http://forums.laravel.io/viewtopic.php?pid=50215#p50215
 		// When I was doing Artisan::add() I got seg fault 11.
 		$this->app->singleton('command.freezer.clear', function($app) use ($dir) {
@@ -49,7 +54,15 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider {
 		if (count($config['whitelist'])) {
 			$lists = $this->app->make('freezer.lists');
 			$cookies = $this->app->make('cookie');
-			$this->app->after(function($request, $response) use ($dir, $lists, $cookies) {
+			$queue = $this->app->make('freezer.queue');
+			$this->app->after(function($request, $response) use ($dir, $lists, $cookies, $queue) {
+				
+				// Iterate through the queue of operations and do clears or rebuilds.  Check that
+				// we're not currently fielding a request from Freezer, though. Otherwise infitine
+				// loops
+				if (!preg_match('#'.preg_quote(Facade::USER_AGENT, '#').'#', $request->header('user-agent'))) {
+					$queue->process();
+				}
 				
 				// Init create class and check if we should cache this request
 				$create = new Create($response, $dir);

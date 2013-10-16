@@ -65,7 +65,8 @@ class Delete {
 			
 			// Simulate a request.  This also will trigger Freezer to generate a new cache automatically
 			// for that URL.  So there is no need to deal with the response from the call.
-			$this->client->request('GET', $uri);
+			$server = array('HTTP_USER_AGENT' =>'Symfony2 BrowserKit '.Facade::USER_AGENT);
+			$this->client->request('GET', $uri, array(), array(), $server);
 			
 		}
 		
