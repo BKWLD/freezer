@@ -30,10 +30,10 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider {
 		
 		// Register commands.  Syntax from http://forums.laravel.io/viewtopic.php?pid=50215#p50215
 		// When I was doing Artisan::add() I got seg fault 11.
-		$this->app->singleton('command.freezer.clear', function($app) use ($dir) {
+		$this->app->singleton('command.freezer.clear', function($app) {
 			return new Commands\Clear;
 		});
-		$this->app->singleton('command.freezer.prune', function($app) use ($dir, $lists) {
+		$this->app->singleton('command.freezer.prune', function($app) use ($lists) {
 			return new Commands\Prune($lists);
 		});
 		$this->commands(array('command.freezer.clear', 'command.freezer.prune'));
