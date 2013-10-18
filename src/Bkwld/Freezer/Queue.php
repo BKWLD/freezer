@@ -32,7 +32,7 @@ class Queue {
 		}
 		
 		// Dedupe the incoming operation
-		$key = $operation.'|'.$pattern.'|'.$lifetime;
+		$key = implode('|', func_get_args());
 		if (in_array($key, array_keys($this->queue))) return false;
 		
 		// Add the operation to the queue
