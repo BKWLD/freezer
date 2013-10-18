@@ -77,7 +77,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider {
 	 * @return array
 	 */
 	public function provides() {
-		return array('freezer', 'freezer.delete', 'freezer.lists', 'command.freezer.clear', 'command.freezer.prune');
+		return array('freezer', 'freezer.delete', 'freezer.lists', 'freezer.queue', 'command.freezer.clear', 'command.freezer.prune');
 	}
 
 }
