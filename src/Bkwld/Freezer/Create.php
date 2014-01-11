@@ -28,7 +28,7 @@ class Create {
 		
 		// Determine if we have been instructed to skip this request.  Skipping
 		// only affects a single request, so delete the cookie imediately
-		if ($cookies->has(Facade::SKIP_COOKIE)) {
+		if (\Input::cookie(Facade::SKIP_COOKIE)) {
 			$this->response->withCookie($cookies->forget(Facade::SKIP_COOKIE));
 			return false;
 		}
