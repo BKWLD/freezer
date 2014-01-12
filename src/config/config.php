@@ -26,5 +26,10 @@
 	'blacklist' => array(
 		'admin*',          // Don't cache admin pages
 	),
+	
+	/**
+	 * Auto remove the SKIP cookie.
+	 */
+	'autoremovecookie' => true,
 
 );
