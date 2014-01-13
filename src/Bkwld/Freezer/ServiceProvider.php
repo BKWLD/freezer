@@ -65,7 +65,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider {
 				}
 				
 				// Init create class and check if we should cache this request
-				$create = new Create($response, $dir);
+				$create = new Create($response, $dir, $this->app);
 				$create->conditionallyCache($request, $lists, $cookies);
 			});
 		}
