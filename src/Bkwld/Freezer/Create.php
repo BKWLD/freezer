@@ -26,6 +26,11 @@ class Create {
 	 */
 	public function conditionallyCache($request, $lists, $cookies) {
 		
+		// Check if Freezer has been disabled via the `disable()` api
+		if ($request->hasSessionStore() && $request->getSessionStore()->has(Facade::DISABLE_KEY)) {
+			return false;
+		}
+
 		// Determine if we have been instructed to skip this request.  Skipping
 		// only affects a single request, so delete the cookie imediately
 		if ($request->cookie(Facade::SKIP_COOKIE)) {
