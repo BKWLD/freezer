@@ -27,7 +27,7 @@ class Create {
 	public function conditionallyCache($request, $lists, $cookies) {
 		
 		// Check if Freezer has been disabled via the `disable()` api
-		if ($request->hasSessionStore() && $request->getSessionStore()->has(Facade::DISABLE_KEY)) {
+		if ($request->hasSession() && $request->getSession()->has(Facade::DISABLE_KEY)) {
 			return false;
 		}
 
