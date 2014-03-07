@@ -26,6 +26,16 @@ class Create {
 	 */
 	public function conditionallyCache($request, $lists, $cookies) {
 		
+		// Only cache HTML responses from Laravel
+		if ($this->response->headers->has('content-type') 
+			&& strpos($this->response->headers->get('content-type'), 'text/html') === false) return false;
+
+		// .. also check for content type set outside of Laravel
+		foreach(headers_list() as $header) {
+			if (strpos(strtolower($header), 'content-type') !== false 
+				&& strpos(strtolower($header), 'text/html') === false) return false;
+		}
+
 		// Check if Freezer has been disabled via the `disable()` api
 		if ($request->hasSession() && $request->getSession()->has(Facade::DISABLE_KEY)) {
 			return false;
